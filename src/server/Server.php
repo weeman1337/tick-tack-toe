@@ -63,6 +63,12 @@ class Server implements MessageComponentInterface
         $conn->close();
     }
 
+    /**
+     * Connect a new user to a room.
+     *
+     * @param $resourceId
+     * @return bool
+     */
     private function joinRoom($resourceId): bool
     {
         foreach ($this->rooms as $room) {
