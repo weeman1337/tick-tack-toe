@@ -1,33 +1,61 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
     <title>Game</title>
 
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" type="text/css" href="dist/bootstrap.min.css">
+
+    <!-- Custom styles for this template -->
     <link rel="stylesheet" type="text/css" href="assets/css/app.css">
 </head>
+
 <body>
+<div class="container">
 
-<h1 id="title"></h1>
-<button id="join">Join Room</button>
-<table id="tictac">
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-</table>
+    <h1 id="title"></h1>
+    <div class="row">
+        <div class="col-md-3">
+            <button id="join" class="btn btn-success">Join Room</button>
+        </div>
+        <div class="col-md-9" id="error">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            Du machst  <span id="yourChecker"></span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
 
+            <table id="tictac">
+                <tr>
+                    <td data-id="1"></td>
+                    <td data-id="2"></td>
+                    <td data-id="3"></td>
+                </tr>
+                <tr>
+                    <td data-id="4"></td>
+                    <td data-id="5"></td>
+                    <td data-id="6"></td>
+                </tr>
+                <tr>
+                    <td data-id="7"></td>
+                    <td data-id="8"></td>
+                    <td data-id="9"></td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+
+</div> <!-- /container -->
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="assets/js/app.js"></script>

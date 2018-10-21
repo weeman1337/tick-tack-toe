@@ -4,4 +4,9 @@
     width: 50px;
     text-align: center;
     vertical-align: center;
+    cursor: pointer;
+}
+
+#tictac {
+    border-collapse: unset;
 }
