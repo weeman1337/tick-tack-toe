@@ -9,16 +9,17 @@ class Server implements MessageComponentInterface
 {
 
     protected $clients;
-    private $room1;
-    private $room2;
-    private $room3;
 
-    public function __construct()
+    private $rooms;
+
+    /**
+     * Server constructor.
+     * @param Room[] $rooms
+     */
+    public function __construct(array $rooms)
     {
         $this->clients = new \SplObjectStorage;
-        $this->room1 = new Room(1);
-        $this->room2 = new Room(2);
-        $this->room3 = new Room(3);
+        $this->rooms = $rooms;
     }
 
     public function onOpen(ConnectionInterface $conn)
@@ -26,43 +27,18 @@ class Server implements MessageComponentInterface
         // Store the new connection to send messages to later
         $this->clients->attach($conn);
 
-        echo "New connection! ({$conn->resourceId})\n";
+        echo 'New connection! (' . $conn->resourceId . ')';
     }
 
     public function onMessage(ConnectionInterface $from, $msg)
     {
 
-        $numRecv = count($this->clients) - 1;
-        $data = json_decode($msg);
-
-        $return = '';
-
-        //echo sprintf('Connection %d sending message "%s" to %d other connection%s' . "\n", $from->resourceId, $msg, $numRecv, $numRecv == 1 ? '' : 's');
-
-        if (isset($data->roomId)) {
-            $from->send('Created room with the id ' . $data->roomId);
-
-        } else {
-            $from->send('Please give me a room id!');
+        if ($this->joinRoom($from) === false) {
+            $from->send('No available rooms');
+            return;
         }
 
-        switch ($data->roomId) {
-            case 1:
-                $return .= $this->joinRoom($this->room1, $from->resourceId);
-                break;
-            case 2:
-                $return .= $this->joinRoom($this->room2, $from->resourceId);
-                break;
-            case 3:
-                $return .= $this->joinRoom($this->room3, $from->resourceId);
-                break;
-            default:
-                $return .= 'Room does not exist.';
-        }
-
-        echo $data->roomId;
-
-        $from->send($return);
+        $from->send('Found room!');
 
         foreach ($this->clients as $client) {
             if ($from !== $client) {
@@ -87,21 +63,21 @@ class Server implements MessageComponentInterface
         $conn->close();
     }
 
-    /**
-     * Checks player count in room and allow or decline a join.
-     *
-     * @param Room $room
-     * @param $resourceId
-     * @return string
-     */
-    private function joinRoom(Room $room, $resourceId): string
+    private function joinRoom($resourceId): bool
     {
-        if ($room->getPlayerCount() <= 1) {
-            echo "playercount " . $room->getPlayerCount();
-            $room->join($resourceId);
-            return 'Join to room ' . $room->getId() . ' successfull.';
-        } else {
-            return 'To much players.';
+        foreach ($this->rooms as $room) {
+
+            echo '[Room][' . $room->getId() . '] Trying to join';
+            if ($room->isAvailable()) {
+                $room->join($resourceId);
+                return true;
+            }
+
+            echo '[Room][' . $room->getId() . '] Room is full';
+
         }
+
+        return false;
+
     }
 }

@@ -9,6 +9,8 @@ class Room
     private $id;
     private $playerCount;
 
+    private $maxPlayerLimit = 2;
+
     /**
      * Room constructor.
      * @param $roomId
@@ -63,5 +65,17 @@ class Room
         return $this->playerCount;
     }
 
+
+    /**
+     * @return bool
+     */
+    public function isAvailable(): bool
+    {
+        if ($this->getPlayerCount() < $this->maxPlayerLimit) {
+            return true;
+        }
+
+        return false;
+    }
 
 }
