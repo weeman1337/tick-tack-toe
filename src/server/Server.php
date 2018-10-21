@@ -9,10 +9,16 @@ class Server implements MessageComponentInterface
 {
 
     protected $clients;
+    private $room1;
+    private $room2;
+    private $room3;
 
     public function __construct()
     {
         $this->clients = new \SplObjectStorage;
+        $this->room1 = new Room(1);
+        $this->room2 = new Room(2);
+        $this->room3 = new Room(3);
     }
 
     public function onOpen(ConnectionInterface $conn)
@@ -25,9 +31,38 @@ class Server implements MessageComponentInterface
 
     public function onMessage(ConnectionInterface $from, $msg)
     {
+
         $numRecv = count($this->clients) - 1;
-        echo sprintf('Connection %d sending message "%s" to %d other connection%s' . "\n"
-            , $from->resourceId, $msg, $numRecv, $numRecv == 1 ? '' : 's');
+        $data = json_decode($msg);
+
+        $return = '';
+
+        //echo sprintf('Connection %d sending message "%s" to %d other connection%s' . "\n", $from->resourceId, $msg, $numRecv, $numRecv == 1 ? '' : 's');
+
+        if (isset($data->roomId)) {
+            $from->send('Created room with the id ' . $data->roomId);
+
+        } else {
+            $from->send('Please give me a room id!');
+        }
+
+        switch ($data->roomId) {
+            case 1:
+                $return .= $this->joinRoom($this->room1, $from->resourceId);
+                break;
+            case 2:
+                $return .= $this->joinRoom($this->room2, $from->resourceId);
+                break;
+            case 3:
+                $return .= $this->joinRoom($this->room3, $from->resourceId);
+                break;
+            default:
+                $return .= 'Room does not exist.';
+        }
+
+        echo $data->roomId;
+
+        $from->send($return);
 
         foreach ($this->clients as $client) {
             if ($from !== $client) {
@@ -50,5 +85,23 @@ class Server implements MessageComponentInterface
         echo "An error has occurred: {$e->getMessage()}\n";
 
         $conn->close();
+    }
+
+    /**
+     * Checks player count in room and allow or decline a join.
+     *
+     * @param Room $room
+     * @param $resourceId
+     * @return string
+     */
+    private function joinRoom(Room $room, $resourceId): string
+    {
+        if ($room->getPlayerCount() <= 1) {
+            echo "playercount " . $room->getPlayerCount();
+            $room->join($resourceId);
+            return 'Join to room ' . $room->getId() . ' successfull.';
+        } else {
+            return 'To much players.';
+        }
     }
 }
