@@ -33,19 +33,19 @@ class Server implements MessageComponentInterface
     public function onMessage(ConnectionInterface $from, $msg)
     {
 
-        if ($this->joinRoom($from) === false) {
+        if ($this->joinRoom($from->resourceId) === false) {
             $from->send('No available rooms');
             return;
         }
 
         $from->send('Found room!');
 
-        foreach ($this->clients as $client) {
+        /*foreach ($this->clients as $client) {
             if ($from !== $client) {
                 // The sender is not the receiver, send to each client connected
                 $client->send($msg);
             }
-        }
+        }*/
     }
 
     public function onClose(ConnectionInterface $conn)
@@ -66,6 +66,10 @@ class Server implements MessageComponentInterface
     private function joinRoom($resourceId): bool
     {
         foreach ($this->rooms as $room) {
+
+            if ($room->findPlayerInRoom($resourceId)) {
+                return false;
+            }
 
             echo '[Room][' . $room->getId() . '] Trying to join';
             if ($room->isAvailable()) {
