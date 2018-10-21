@@ -5,9 +5,11 @@ namespace TickTackToe\server;
 
 class Room
 {
+    /** @var Player */
     private $player;
     private $id;
-    private $playerCount;
+    private $playerCount = 0;
+    private $players;
 
     private $maxPlayerLimit = 2;
 
@@ -29,10 +31,17 @@ class Room
      *
      * @return void
      */
-    public function join($player): void
+    public function join($resourceId): void
     {
         $this->playerCount++;
-        $this->player = $player;
+        $this->player = new Player($resourceId);
+        $this->players[$resourceId] = $this->player;
+
+        if ($this->playerCount === 1) {
+            $this->player->setPlayerChar('o');
+        } else {
+            $this->player->setPlayerChar('x');
+        }
     }
 
     /**
@@ -58,11 +67,11 @@ class Room
     /**
      * Return the current connected players.
      *
-     * @return mixed
+     * @return int
      */
     public function getPlayerCount(): int
     {
-        return $this->playerCount;
+        return (int)$this->playerCount;
     }
 
 
@@ -71,7 +80,33 @@ class Room
      */
     public function isAvailable(): bool
     {
-        if ($this->getPlayerCount() < $this->maxPlayerLimit) {
+        if ($this->getPlayerCount() <= $this->maxPlayerLimit) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns array of player objects.
+     *
+     * @return array
+     */
+    public function getPlayersInRoom(): array
+    {
+        return $this->players;
+    }
+
+    /**
+     * Searches in the array if the user already are in the room.
+     *
+     * @param $resourceId
+     * @return bool
+     */
+    public function findPlayerInRoom($resourceId): bool
+    {
+
+        if (!empty($this->players[$resourceId])) {
             return true;
         }
 
