@@ -3,7 +3,7 @@ var log = function (msg) {
     $('#error').html('<div class="alert alert-danger" role="alert">' + msg + '</div>');
 };
 
-var conn = new WebSocket('ws://192.168.178.37:1337');
+var conn = new WebSocket('ws://localhost:1337');
 conn.onopen = function (e) {
     console.log("Connection established!");
 };

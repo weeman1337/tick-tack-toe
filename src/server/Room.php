@@ -27,7 +27,7 @@ class Room
     /**
      * Join room and count player.
      *
-     * @param $player
+     * @param $resourceId
      *
      * @return void
      */
@@ -71,7 +71,7 @@ class Room
      */
     public function getPlayerCount(): int
     {
-        return (int)$this->playerCount;
+        return (int) $this->playerCount;
     }
 
 

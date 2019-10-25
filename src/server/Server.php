@@ -78,6 +78,7 @@ class Server implements MessageComponentInterface
             }
 
             echo '[Room][' . $room->getId() . '] Trying to join';
+
             if ($room->isAvailable()) {
                 $room->join($resourceId);
                 return true;
